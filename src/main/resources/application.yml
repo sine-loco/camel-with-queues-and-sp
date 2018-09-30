@@ -1,0 +1,35 @@
+spring:
+  activemq:
+    in-memory: true
+    pooled: false
+
+
+camel:
+  springboot:
+    main-run-controller: true
+
+
+# expose actuator endpoint via HTTP
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - info
+          - health
+          - camelroutes
+
+    # show verbose health details (/actuator/info) so you can see Camel information also
+  endpoint:
+    health:
+      show-details: always
+
+    # allow to obtain basic information about Camel routes (read only mode)
+    camelroutes:
+      enabled: true
+      read-only: true
+
+    # to turn off Camel info in (/actuator/info)
+  info:
+    camel:
+      enabled: false

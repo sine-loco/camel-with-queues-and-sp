@@ -38,23 +38,46 @@ repositories {
 allprojects {
     dependencyManagement {
         imports {
-            mavenBom SpringBootPlugin.BOM_COORDINATES
+            mavenBom( SpringBootPlugin.BOM_COORDINATES ) {
+                bomProperty 'spring.version', '5.1.0.RELEASE'
+            }
+        }
 
-            mavenBom 'org.springframework:spring-framework-bom:5.1.0.RELEASE'
+        dependencies {
+            dependencySet( group: 'org.apache.camel', version: '2.22.1' ) {
+                entry 'camel-spring-boot-starter'
+                entry 'camel-test-spring'
+                entry 'camel-jms'
+            }
+
+
+            dependencySet( group: 'org.apache.logging.log4j', version: '2.11.1' ) {
+                entry 'log4j-core'
+                entry 'log4j-api'
+            }
 
         }
     }
 
+    tasks.withType( JavaCompile ) {
+        options.encoding = 'UTF-8'
+        options.compilerArgs += '-proc:none'
+    }
 }
 
 dependencies {
     implementation(
             'org.springframework.boot:spring-boot-starter-actuator',
+            'org.springframework.boot:spring-boot-starter-activemq',
 
-            'org.apache.camel:camel-spring-boot-starter:2.22.1',
+            'org.apache.camel:camel-spring-boot-starter',
+            'org.apache.camel:camel-jms',
+
+            'org.apache.logging.log4j:log4j-core',
+            'org.apache.logging.log4j:log4j-api',
 
             // ---------- JAXB
-            /* 'com.sun.xml.bind:jaxb-core' and 'com.sun.xml.bind:jaxb-impl' 
+            /* 'com.sun.xml.bind:jaxb-core' and 'com.sun.xml.bind:jaxb-impl'
              * are already onboard */
             // to avoid 'java.lang.ClassNotFoundException: javax.xml.bind.JAXBContext'
             'javax.xml.bind:jaxb-api:2.3.0',
@@ -67,10 +90,11 @@ dependencies {
 
     testImplementation(
             'org.springframework.boot:spring-boot-starter-test',
-
             'ru.yandex.qatools.embed:postgresql-embedded:2.9',
+            'org.apache.camel:camel-test-spring',
     )
 }
+
 
 
 wrapper {
